@@ -44,10 +44,8 @@ class MealBloc extends Bloc<MealEvent, MealState> {
     try {
       final Meal meal = event.mealChecked;
 
-      // Atualiza no repositório
       await mealRepository.checkMeal(meal, true);
 
-      // Agora recarrega e EMITE novo estado
       final List<Meal> updated = await mealRepository.getMealList();
       final filtered = updated.where((m) => !m.isCompleted).toList();
 

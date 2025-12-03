@@ -14,22 +14,18 @@ class Meal extends HiveObject {
   String? description;
 
   @HiveField(3)
-  String? recipe;
-
-  @HiveField(4)
   int? calories;
 
-  @HiveField(5)
+  @HiveField(4)
   TimeOfDay? time;
 
-  @HiveField(6)
+  @HiveField(5)
   bool isCompleted;
 
   Meal({
     this.id,
     this.title,
     this.description,
-    this.recipe,
     this.calories,
     this.time,
     this.isCompleted = false,

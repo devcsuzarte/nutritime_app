@@ -17,10 +17,6 @@ class StreakRepository implements StreakRepositoryContract {
 
     if (streakBox.isEmpty) {
       await _createNewStreakList(meals);
-      if (streakBox.isNotEmpty) {
-        final streakList = await _convertListFromHive(streakBox.values.toList());
-        return streakList;
-      }
     }
 
     if (currentDate.weekday == 0 &&

@@ -12,3 +12,11 @@ class LoadStreak extends StreakEvent {
   @override
   List<Object> get props => [];
 }
+
+class CheckMeal extends StreakEvent {
+  final Meal mealChecked;
+  const CheckMeal({required this.mealChecked});
+  
+  @override
+  List<Object> get props => [mealChecked];
+}

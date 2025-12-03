@@ -22,7 +22,10 @@ class CheckStreak extends StatelessWidget {
     if (streakStatus == 'checked') {
       return Padding(
         padding: const EdgeInsets.all(8.0),
-        child: SvgPicture.asset('assets/checked.svg'),
+        child: SvgPicture.asset(
+          'assets/checked.svg',
+          color: foregroundColor,
+        ),
       );
     }
 

@@ -21,13 +21,21 @@ class _AddMealPageState extends State<AddMealPage> {
   final TextEditingController titleController = TextEditingController(),
       descriptionController = TextEditingController(),
       timeController = TextEditingController(),
-      caloriesController = TextEditingController(),
-      recipeController = TextEditingController();
+      caloriesController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
   TimeOfDay? _selectedTime;
   bool newMealAdded = false;
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    descriptionController.dispose();
+    timeController.dispose();
+    caloriesController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,22 +95,15 @@ class _AddMealPageState extends State<AddMealPage> {
                         label: 'Calories',
                         hint: '100kcal',
                       ),
-                      TextFieldDefault(
-                        controller: recipeController,
-                        label: 'Recipe',
-                        hint: '2x - Eggs\n1x - Bacon',
-                      ),
                       ThemeSpacers.h32,
                       ButtonDefault(
                         onClick: () {
-                          
                           final form = _formKey.currentState;
 
                           if (form != null && form.validate()) {
                             final Meal meal = Meal(
                               title: titleController.text,
                               description: descriptionController.text,
-                              recipe: recipeController.text,
                               calories: int.tryParse(caloriesController.text),
                               time: _selectedTime,
                             );
@@ -110,12 +111,6 @@ class _AddMealPageState extends State<AddMealPage> {
                             context.read<AddMealBloc>().add(
                               CreateMeal(meal: meal),
                             );
-                            if (state is AddMealSuccessState) {
-                              newMealAdded = state.mealAdded;
-                              setState(() {
-                                form.reset();
-                              });
-                            }
                           }
                         },
                         isLarge: true,
@@ -129,17 +124,15 @@ class _AddMealPageState extends State<AddMealPage> {
           },
           listener: (BuildContext context, state) {
             if (state is AddMealSuccessState) {
-              DefaultDialog(
-                context: context,
-                defaultFunction: () {
-                  Navigator.pop(context);
-                },
-                title: 'Done',
-                message: 'Meal successfuly added',
-                buttonTitle: 'Ok',
-              ).showDefaultDialog();
+              newMealAdded = state.mealAdded;
+              setState(() {
+                _formKey.currentState?.reset();
+                titleController.clear();
+                descriptionController.clear();
+                timeController.clear();
+                caloriesController.clear();
+              });
             }
-
             if (state is AddMealErrorState) {
               DefaultDialog(
                 context: context,
