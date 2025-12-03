@@ -14,6 +14,7 @@ class StreakBloc extends Bloc<StreakEvent, StreakState> {
   StreakBloc({required this.mealRepository, required this.streakRepository})
     : super(StreakInitial()) {
     on<LoadStreak>(_onLoadStreak);
+    on<CheckMeal>(_onChecked);
   }
 
   _onLoadStreak(LoadStreak event, Emitter<StreakState> emit) async {
@@ -26,5 +27,27 @@ class StreakBloc extends Bloc<StreakEvent, StreakState> {
     }
 
     emit(StreakErrorState());
+  }
+
+  Future<void> _onChecked(CheckMeal event, Emitter<StreakState> emit) async {
+    try {
+      final Meal meal = event.mealChecked;
+
+      await mealRepository.checkMeal(meal, true);
+
+      final List<Meal> meals = await mealRepository.getMealList();
+      final List<Streak> streakList = await streakRepository.getStreakList(
+        meals,
+      );
+      emit(
+        StreakLoadedState(
+          List<Streak>.from(streakList),
+          List<Meal>.from(meals),
+        ),
+      );
+    } catch (error) {
+      print(error);
+      //emit(MealErrorState(error.toString()));
+    }
   }
 }

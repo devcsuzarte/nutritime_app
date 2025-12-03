@@ -1,9 +1,5 @@
-import 'dart:io';
-
 import 'package:hive/hive.dart';
-import 'package:intl/intl.dart';
 import 'package:nutritime/data/models/meal.dart';
-import 'package:nutritime/data/models/streak.dart';
 import 'package:nutritime/data/repository/meal/meal_repository_contract.dart';
 
 class MealRepository implements MealRepositoryContract {
@@ -14,8 +10,6 @@ class MealRepository implements MealRepositoryContract {
     newMeal.id = (box.length + 1).toString();
 
     await box.add(newMeal);
-
-    final meals = box.values.toList();
   }
 
   @override

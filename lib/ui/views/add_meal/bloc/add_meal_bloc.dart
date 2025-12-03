@@ -24,9 +24,13 @@ class AddMealBloc extends Bloc<AddMealEvent, AddMealState> {
 
       final Meal newMeal = event.meal;
 
-      await mealRepository.createMeal(newMeal);
-
+      await mealRepository.createMeal(newMeal).whenComplete(
+        () {
       emit(AddMealSuccessState(mealAdded: true));
+
+        }
+      );
+
 
     } catch (e) {
       print('Add meal failed: $e');
