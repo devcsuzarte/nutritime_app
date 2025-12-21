@@ -75,6 +75,22 @@ class MealViewmodel extends FutureViewModel{
     }
   }
 
+   Future<void> updateMeal(Meal meal, Meal mealChanged) async {
+    try {
+
+     final bool mealUpdated = await runBusyFuture(
+      mealRepository.updateMeal(mealChanged, meal)
+    );
+
+    if (mealUpdated) {
+      await loadList();
+    }
+
+    } catch (e) {
+      log('Add meal failed: $e');
+    }
+  }
+
   void setState(MealPageState newState) {
     state.value = newState;
     notifyListeners();
