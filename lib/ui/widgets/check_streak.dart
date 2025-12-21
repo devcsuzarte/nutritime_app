@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nutritime/core/theme/typography.dart';
-import 'package:nutritime/core/utils/enums.dart';
 
 class CheckStreak extends StatelessWidget {
   const CheckStreak({

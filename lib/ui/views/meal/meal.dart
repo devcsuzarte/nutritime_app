@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nutritime/data/models/meal.dart';
 import 'package:nutritime/data/repository/meal/meal_repository.dart';
-import 'package:nutritime/ui/views/add_meal/add_meal_viewmodel.dart';
 import 'package:nutritime/core/theme/colors.dart';
 import 'package:nutritime/core/theme/spacers.dart';
 import 'package:nutritime/core/theme/typography.dart';
+import 'package:nutritime/ui/views/meal/add_meal.dart';
 import 'package:nutritime/ui/views/meal/meal_viewmodel.dart';
 import 'package:nutritime/ui/widgets/button_default.dart';
 import 'package:nutritime/ui/widgets/dialog.dart';
@@ -40,8 +40,8 @@ class _MealPageState extends State<MealPage> {
     super.dispose();
   }
 
-  void listen(AddMealPageState state) {
-    if (state == AddMealPageState.error) {
+  void listen(MealPageState state) {
+    if (state == MealPageState.error) {
       DefaultDialog(
         context: context,
         defaultFunction: () {
@@ -52,6 +52,20 @@ class _MealPageState extends State<MealPage> {
         buttonTitle: 'Ok',
       ).showDefaultDialog();
     }
+  }
+
+  void showAddMealBottomSheet(MealViewmodel viewmodel) {
+    showModalBottomSheet(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      builder: (BuildContext context) => AddMealPage(
+        onCreateMeal: (Meal newMeal) {
+          viewmodel.createMeal(newMeal);
+        },
+      ),
+    );
   }
 
   @override
@@ -95,16 +109,11 @@ class _MealPageState extends State<MealPage> {
               MealViewmodel(mealRepository: MealRepository()),
           onViewModelReady: (model) {
             model
-              ..state.onChange.listen(
-                (event) => currentState = event.neu
-              )
-              ..mealsList.onChange.listen(
-                (event) => meals = event.neu
-              );
+              ..state.onChange.listen((event) => currentState = event.neu)
+              ..mealsList.onChange.listen((event) => meals = event.neu);
           },
           builder: (context, model, child) {
             if (currentState == MealPageState.mealListLoaded) {
-
               return Column(
                 children: [
                   Expanded(
@@ -146,14 +155,8 @@ class _MealPageState extends State<MealPage> {
                       vertical: 18,
                     ),
                     child: ButtonDefault(
-                      onClick: () async {
-                        final result = await Navigator.pushNamed(
-                          context,
-                          '/add_meal',
-                        );
-                        if (result == true) {
-                          model.loadList();
-                        }
+                      onClick: () {
+                        showAddMealBottomSheet(model);
                       },
                       isLarge: true,
                       label: 'Add Meal',
