@@ -4,12 +4,18 @@ import 'package:nutritime/data/repository/meal/meal_repository_contract.dart';
 
 class MealRepository implements MealRepositoryContract {
   @override
-  Future<void> createMeal(Meal newMeal) async {
-    var box = await Hive.openBox('mealBox');
+  Future<bool> createMeal(Meal newMeal) async {
+    try {
+      var box = await Hive.openBox('mealBox');
 
-    newMeal.id = (box.length + 1).toString();
+      newMeal.id = (box.length + 1).toString();
 
-    await box.add(newMeal);
+      await box.add(newMeal);
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   @override
