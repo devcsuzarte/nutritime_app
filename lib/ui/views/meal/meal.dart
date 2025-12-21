@@ -5,7 +5,7 @@ import 'package:nutritime/data/repository/meal/meal_repository.dart';
 import 'package:nutritime/core/theme/colors.dart';
 import 'package:nutritime/core/theme/spacers.dart';
 import 'package:nutritime/core/theme/typography.dart';
-import 'package:nutritime/ui/views/meal/add_meal.dart';
+import 'package:nutritime/ui/views/meal/meal_form.dart';
 import 'package:nutritime/ui/views/meal/meal_viewmodel.dart';
 import 'package:nutritime/ui/widgets/button_default.dart';
 import 'package:nutritime/ui/widgets/dialog.dart';
@@ -57,12 +57,28 @@ class _MealPageState extends State<MealPage> {
   void showAddMealBottomSheet(MealViewmodel viewmodel) {
     showModalBottomSheet(
       context: context,
-      showDragHandle: true,
       isScrollControlled: true,
       backgroundColor: Colors.white,
-      builder: (BuildContext context) => AddMealPage(
+      builder: (BuildContext context) => MealFormPage(
         onCreateMeal: (Meal newMeal) {
           viewmodel.createMeal(newMeal);
+        },
+      ),
+    );
+  }
+
+  void showUpdateMealBottomSheet(MealViewmodel viewmodel, Meal meal) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      builder: (BuildContext context) => MealFormPage(
+        mealUpdate: meal,
+        onCreateMeal: (Meal newMeal) {
+          viewmodel.createMeal(newMeal);
+        },
+        onUpdateMeal: (Meal newMeal) {
+          viewmodel.updateMeal(meal, newMeal);
         },
       ),
     );
@@ -128,6 +144,7 @@ class _MealPageState extends State<MealPage> {
 
                         if (index == 0) {
                           return NextMealCard(
+                            onClick: () => showUpdateMealBottomSheet(model, currentMeal),
                             onComplete: () {
                               model.onChecked(meals[index]);
                             },
@@ -139,6 +156,7 @@ class _MealPageState extends State<MealPage> {
                         }
 
                         return MealCard(
+                          onClick: () => showUpdateMealBottomSheet(model, currentMeal),
                           title: currentMeal.title,
                           time: currentMeal.time?.format(context),
                           calories: currentMeal.calories,
@@ -179,13 +197,7 @@ class _MealPageState extends State<MealPage> {
                     ),
                     ButtonDefault(
                       onClick: () async {
-                        final result = await Navigator.pushNamed(
-                          context,
-                          '/add_meal',
-                        );
-                        if (result == true) {
-                          model.loadList();
-                        }
+                        showAddMealBottomSheet(model);
                       },
                       isLarge: true,
                       label: 'Start',

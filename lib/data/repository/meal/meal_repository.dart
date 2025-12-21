@@ -40,15 +40,29 @@ class MealRepository implements MealRepositoryContract {
   }
 
   @override
-  Future<void> updateMeal(Meal updatedMeal, Meal meal) async {
-    if (updatedMeal.title != null) {
-      meal.title = updatedMeal.title;
-    }
-    if (updatedMeal.description != null) {
-      meal.description = updatedMeal.description;
-    }
+  Future<bool> updateMeal(Meal updatedMeal, Meal meal) async {
+    try {
+      if (updatedMeal.title != null) {
+        meal.title = updatedMeal.title;
+      }
+      if (updatedMeal.description != null) {
+        meal.description = updatedMeal.description;
+      }
 
-    await meal.save();
+      if (updatedMeal.calories != null) {
+        meal.calories = updatedMeal.calories;
+      }
+
+      if (updatedMeal.time != null) {
+        meal.time = updatedMeal.time;
+      }
+
+      await meal.save();
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   @override
