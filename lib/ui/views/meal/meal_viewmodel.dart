@@ -59,6 +59,22 @@ class MealViewmodel extends FutureViewModel{
     }
   }
 
+  Future<void> createMeal(Meal meal,) async {
+    try {
+
+     final bool mealAdded = await runBusyFuture(
+      mealRepository.createMeal(meal)
+    );
+
+    if (mealAdded) {
+      await loadList();
+    }
+
+    } catch (e) {
+      log('Add meal failed: $e');
+    }
+  }
+
   void setState(MealPageState newState) {
     state.value = newState;
     notifyListeners();
@@ -71,5 +87,6 @@ enum MealPageState {
   firstAccess,
   mealListLoaded,
   mealListEmpty,
-  mealListCompleted
+  mealListCompleted,
+  mealCreated
 }

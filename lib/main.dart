@@ -3,7 +3,6 @@ import 'package:hive/hive.dart';
 import 'package:nutritime/data/models/meal.dart';
 import 'package:nutritime/data/models/streak.dart';
 import 'package:nutritime/data/models/time.dart';
-import 'package:nutritime/ui/views/add_meal/add_meal.dart';
 import 'package:nutritime/ui/views/meal/meal.dart';
 import 'package:nutritime/ui/views/streak/streak.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -31,8 +30,7 @@ class MyApp extends StatelessWidget {
           title: 'Flutter Demo',
           routes: {
             '/': (context) => MealPage(),
-            '/add_meal': (context) => AddMealPage(),
-            '/streak': (context) => StreakPage(),
+            '/streak': (context) => StreakPage()
           },
           theme: ThemeData(colorScheme: ColorScheme.light()),
     );

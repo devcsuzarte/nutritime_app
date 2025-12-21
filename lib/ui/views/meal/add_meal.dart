@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:nutritime/data/models/meal.dart';
-import 'package:nutritime/data/repository/meal/meal_repository.dart';
-import 'package:nutritime/ui/views/add_meal/add_meal_viewmodel.dart';
-import 'package:nutritime/core/theme/colors.dart';
 import 'package:nutritime/core/theme/spacers.dart';
-import 'package:nutritime/core/theme/typography.dart';
 import 'package:nutritime/ui/widgets/button_default.dart';
-import 'package:nutritime/ui/widgets/dialog.dart';
 import 'package:nutritime/ui/widgets/text_field_default.dart';
-import 'package:stacked/stacked.dart';
 
 class AddMealPage extends StatefulWidget {
-  const AddMealPage({super.key});
+  const AddMealPage({super.key, required this.onCreateMeal});
 
+  final Function(Meal) onCreateMeal;
   @override
   State<AddMealPage> createState() => _AddMealPageState();
 }
@@ -37,42 +32,30 @@ class _AddMealPageState extends State<AddMealPage> {
     super.dispose();
   }
 
-  void listen(AddMealPageState state) {
-    if (state == AddMealPageState.error) {
-      DefaultDialog(
-        context: context,
-        defaultFunction: () {
-          Navigator.pop(context);
-        },
-        title: 'Something went wrong',
-        message: 'Try again later',
-        buttonTitle: 'Ok',
-      ).showDefaultDialog();
-    }
-
-    if (state == AddMealPageState.mealAdded) {
+  void createMeal() {
+      widget.onCreateMeal(
+        Meal(
+          title: titleController.text,
+          description: descriptionController.text,
+          calories: int.tryParse(caloriesController.text),
+          time: _selectedTime,
+        ),
+      );
       setState(() {
         titleController.clear();
         descriptionController.clear();
         timeController.clear();
         caloriesController.clear();
       });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context, newMealAdded),
-          icon: Icon(Icons.arrow_back, color: ThemeColors.secondary()),
-        ),
-        title: Text('Add Meal', style: ThemeTypography.getTitle2()),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 24.0),
-        child: Form(
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 24.0),
+        height: MediaQuery.of(context).size.height * 0.7,
+        child: Scaffold(
+          body: Form(
             key: _formKey,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 28.0),
@@ -98,7 +81,7 @@ class _AddMealPageState extends State<AddMealPage> {
                           cancelText: 'Cancel',
                           confirmText: 'OK',
                         );
-
+          
                         if (pickedTime != null) {
                           _selectedTime = pickedTime;
                           timeController.text = pickedTime.format(context);
@@ -120,16 +103,11 @@ class _AddMealPageState extends State<AddMealPage> {
                     ButtonDefault(
                       onClick: () {
                         final form = _formKey.currentState;
-
+          
                         if (form != null && form.validate()) {
-                          final Meal meal = Meal(
-                            title: titleController.text,
-                            description: descriptionController.text,
-                            calories: int.tryParse(caloriesController.text),
-                            time: _selectedTime,
-                          );
-
-                          Navigator.pop(context, meal);
+                          createMeal();
+          
+                          Navigator.pop(context);
                         }
                       },
                       isLarge: true,
