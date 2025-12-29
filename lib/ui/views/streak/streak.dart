@@ -73,7 +73,7 @@ class _StreakPageState extends State<StreakPage> {
                 Column(
                   children: [
                     Container(
-                      color: ThemeColors.secondary2(),
+                      color: ThemeColors.secondary(),
                       padding: EdgeInsets.all(12),
                       constraints: BoxConstraints(maxHeight: 120),
                       child: Column(
@@ -95,7 +95,7 @@ class _StreakPageState extends State<StreakPage> {
                                     day: streak[index].day,
                                     streakStatus: streak[index].status,
                                     backgroundColor: Colors.white,
-                                    foregroundColor: ThemeColors.secondary2(),
+                                    foregroundColor: ThemeColors.secondary(),
                                   );
                                 },
                                 scrollDirection: Axis.horizontal,
@@ -129,7 +129,7 @@ class _StreakPageState extends State<StreakPage> {
                              model.onChecked(meals[index]);
                             },
                             day: null,
-                            backgroundColor: ThemeColors.secondary2(),
+                            backgroundColor: ThemeColors.secondary(),
                             foregroundColor: Colors.white,
                             streakStatus: meals[index].isCompleted ? 'checked' : 'current'
                           ),

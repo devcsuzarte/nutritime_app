@@ -117,7 +117,7 @@ class _MealFormPageState extends State<MealFormPage> {
                     }
                   },
                   mini: true,
-                  backgroundColor: ThemeColors.secondary2(),
+                  backgroundColor: ThemeColors.secondary(),
                   child: Icon(Icons.check),
                 ),
                 Flexible(

@@ -44,12 +44,6 @@ class NextMealCard extends StatelessWidget {
                       text: '$title – $time ',
                       style: ThemeTypography.getTitle2(),
                     ),
-                    // WidgetSpan(
-                    //   child: Icon(
-                    //     Icons.access_time,
-                    //     size: 20,
-                    //   )
-                    // ),
                     TextSpan(
                       text: '\n$description',
                       style: ThemeTypography.getTitle4(),

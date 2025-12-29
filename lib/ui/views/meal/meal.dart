@@ -91,6 +91,7 @@ class _MealPageState extends State<MealPage> {
         centerTitle: false,
         actions: [
           IconButton(
+             style: IconButton.styleFrom(backgroundColor: Colors.white),
             onPressed: () {},
             icon: SvgPicture.asset(
               'assets/notification_icon.svg',
@@ -109,17 +110,27 @@ class _MealPageState extends State<MealPage> {
             ),
           ),
         ],
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        title: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text('Good Morning,', style: ThemeTypography.getTitle4()),
-            ThemeSpacers.h4,
-            Text('Claudio Suzarte', style: ThemeTypography.getTitle2()),
+            SizedBox(
+              height: 40,
+              width: 40,
+              child: Image.asset(
+                'assets/nutritime.png',
+              ),
+            ),
+            ThemeSpacers.w8,
+            Text(
+              'Nutritime',
+              style: ThemeTypography.getTitle2(),
+            ),
           ],
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 24.0),
+        padding: const EdgeInsets.only(bottom: 24),
         child: ViewModelBuilder<MealViewmodel>.reactive(
           viewModelBuilder: () =>
               MealViewmodel(mealRepository: MealRepository()),
@@ -144,7 +155,8 @@ class _MealPageState extends State<MealPage> {
 
                         if (index == 0) {
                           return NextMealCard(
-                            onClick: () => showUpdateMealBottomSheet(model, currentMeal),
+                            onClick: () =>
+                                showUpdateMealBottomSheet(model, currentMeal),
                             onComplete: () {
                               model.onChecked(meals[index]);
                             },
@@ -156,7 +168,8 @@ class _MealPageState extends State<MealPage> {
                         }
 
                         return MealCard(
-                          onClick: () => showUpdateMealBottomSheet(model, currentMeal),
+                          onClick: () =>
+                              showUpdateMealBottomSheet(model, currentMeal),
                           title: currentMeal.title,
                           time: currentMeal.time?.format(context),
                           calories: currentMeal.calories,
