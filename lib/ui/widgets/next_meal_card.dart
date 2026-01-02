@@ -36,16 +36,16 @@ class NextMealCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 15),
+              padding: const EdgeInsets.all(15),
               child: RichText(
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: '$title – $time ',
+                      text: 'Next meal – $time',
                       style: ThemeTypography.getTitle2(),
                     ),
                     TextSpan(
-                      text: '\n$description',
+                      text: '\n$title',
                       style: ThemeTypography.getTitle4(),
                     ),
                   ],
@@ -53,7 +53,7 @@ class NextMealCard extends StatelessWidget {
               ),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 15),
+              padding: const EdgeInsets.all(15),
               decoration: BoxDecoration(
                 color: ThemeColors.primary(),
                 borderRadius: BorderRadius.only(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:nutritime/core/utils/utils.dart';
 import 'package:nutritime/data/models/meal.dart';
 import 'package:nutritime/data/repository/meal/meal_repository.dart';
 import 'package:nutritime/core/theme/colors.dart';
@@ -30,6 +31,7 @@ class _MealPageState extends State<MealPage> {
   bool newMealAdded = false;
   MealPageState currentState = MealPageState.none;
   List<Meal> meals = List.empty();
+  Meal? nextMeal;
 
   @override
   void dispose() {
@@ -91,7 +93,7 @@ class _MealPageState extends State<MealPage> {
         centerTitle: false,
         actions: [
           IconButton(
-             style: IconButton.styleFrom(backgroundColor: Colors.white),
+            style: IconButton.styleFrom(backgroundColor: Colors.white),
             onPressed: () {},
             icon: SvgPicture.asset(
               'assets/notification_icon.svg',
@@ -117,15 +119,10 @@ class _MealPageState extends State<MealPage> {
             SizedBox(
               height: 40,
               width: 40,
-              child: Image.asset(
-                'assets/nutritime.png',
-              ),
+              child: Image.asset('assets/nutritime.png'),
             ),
             ThemeSpacers.w8,
-            Text(
-              'Nutritime',
-              style: ThemeTypography.getTitle2(),
-            ),
+            Text('Nutritime', style: ThemeTypography.getTitle2()),
           ],
         ),
       ),
@@ -137,12 +134,28 @@ class _MealPageState extends State<MealPage> {
           onViewModelReady: (model) {
             model
               ..state.onChange.listen((event) => currentState = event.neu)
-              ..mealsList.onChange.listen((event) => meals = event.neu);
+              ..mealsList.onChange.listen((event) => meals = event.neu)
+              ..nextMeal.onChange.listen((event) => nextMeal = event.neu);
           },
           builder: (context, model, child) {
             if (currentState == MealPageState.mealListLoaded) {
               return Column(
                 children: [
+                  if (nextMeal != null)
+                  NextMealCard(
+                    onClick: () =>
+                        showUpdateMealBottomSheet(model, nextMeal!),
+                    onComplete: () {
+                      model.onChecked(nextMeal!);
+                    },
+                    time: nextMeal!.time?.format(context),
+                    title: nextMeal!.title,
+                    calories: nextMeal!.calories,
+                    description: nextMeal!.description,
+                  ),
+
+                  ThemeSpacers.h28,
+
                   Expanded(
                     child: ListView.separated(
                       itemCount: meals.length,
@@ -151,20 +164,6 @@ class _MealPageState extends State<MealPage> {
 
                         if (currentMeal.isCompleted) {
                           return const SizedBox.shrink();
-                        }
-
-                        if (index == 0) {
-                          return NextMealCard(
-                            onClick: () =>
-                                showUpdateMealBottomSheet(model, currentMeal),
-                            onComplete: () {
-                              model.onChecked(meals[index]);
-                            },
-                            time: currentMeal.time?.format(context),
-                            title: currentMeal.title,
-                            calories: currentMeal.calories,
-                            description: currentMeal.description,
-                          );
                         }
 
                         return MealCard(

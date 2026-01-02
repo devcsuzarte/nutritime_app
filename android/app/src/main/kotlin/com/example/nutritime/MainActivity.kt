@@ -1,4 +1,4 @@
-package com.example.nutritime
+package com.csuzarte.nutritime.app
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:nutritime/core/utils/utils.dart';
 import 'package:nutritime/data/models/meal.dart';
 import 'package:nutritime/data/repository/meal/meal_repository.dart';
 import 'package:stacked/stacked.dart';
@@ -12,6 +13,7 @@ class MealViewmodel extends FutureViewModel{
 
   ReactiveValue<MealPageState> state = ReactiveValue(MealPageState.none);
   ReactiveValue<List<Meal>> mealsList = ReactiveValue(List.empty());
+  ReactiveValue<Meal?> nextMeal = ReactiveValue(null); 
 	
 	MealViewmodel({required this.mealRepository});
 
@@ -38,6 +40,7 @@ class MealViewmodel extends FutureViewModel{
       }
 
       mealsList.value = filtered;
+      setNextMeal();
       setState(MealPageState.mealListLoaded);
       notifyListeners();
 
@@ -89,6 +92,25 @@ class MealViewmodel extends FutureViewModel{
     } catch (e) {
       log('Add meal failed: $e');
     }
+  }
+
+  void setNextMeal() {
+    Meal? nextFound;
+    
+    mealsList.value.forEach((element) {
+      if (Utils.isNextCard(element)) {
+        nextFound = element;
+      }
+    });
+
+    if (nextFound == null) return;
+
+    if (nextFound!.isCompleted) {
+      nextMeal.value = null;
+      return;
+    }
+
+    nextMeal.value = nextFound;
   }
 
   void setState(MealPageState newState) {
