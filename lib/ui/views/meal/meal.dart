@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:nutritime/core/utils/utils.dart';
 import 'package:nutritime/data/models/meal.dart';
 import 'package:nutritime/data/repository/meal/meal_repository.dart';
 import 'package:nutritime/core/theme/colors.dart';
@@ -86,73 +85,117 @@ class _MealPageState extends State<MealPage> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: false,
-        actions: [
-          IconButton(
-            style: IconButton.styleFrom(backgroundColor: Colors.white),
-            onPressed: () {},
-            icon: SvgPicture.asset(
-              'assets/notification_icon.svg',
-              color: ThemeColors.secondary(),
-            ),
-          ),
-          IconButton(
-            style: IconButton.styleFrom(backgroundColor: Colors.white),
-            onPressed: () {
-              Navigator.pushNamed(context, "/streak");
-            },
-            icon: SvgPicture.asset(
-              'assets/flame_icon.svg',
-              color: ThemeColors.secondary(),
-              height: 23,
-            ),
-          ),
-        ],
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.start,
+  Widget getEmptyLayout(MealPageState state, MealViewmodel model) {
+    if (currentState == MealPageState.mealListEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 28.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            SizedBox(
-              height: 40,
-              width: 40,
-              child: Image.asset('assets/nutritime.png'),
+            Empty(
+              title: 'Lets start',
+              description:
+                  'Bring you diet and let us hel you follow and get you nutrition goals',
             ),
-            ThemeSpacers.w8,
-            Text('Nutritime', style: ThemeTypography.getTitle2()),
+            ButtonDefault(
+              onClick: () async {
+                showAddMealBottomSheet(model);
+              },
+              isLarge: true,
+              label: 'Start',
+            ),
           ],
         ),
+      );
+    }
+
+    if (currentState == MealPageState.mealListCompleted) {
+      return Center(
+        child: Empty(
+          title: 'Congratulations!',
+          description: 'You completed your goals todays.',
+        ),
+      );
+    }
+
+    return Center(
+      child: Empty(
+        title: 'Something went wrong',
+        description: 'Not able to load meals, try again later',
+        ilustration: Icon(
+          Icons.cancel,
+          size: 100,
+          color: ThemeColors.secondary(),
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(bottom: 24),
-        child: ViewModelBuilder<MealViewmodel>.reactive(
-          viewModelBuilder: () =>
-              MealViewmodel(mealRepository: MealRepository()),
-          onViewModelReady: (model) {
-            model
-              ..state.onChange.listen((event) => currentState = event.neu)
-              ..mealsList.onChange.listen((event) => meals = event.neu)
-              ..nextMeal.onChange.listen((event) => nextMeal = event.neu);
-          },
-          builder: (context, model, child) {
-            if (currentState == MealPageState.mealListLoaded) {
-              return Column(
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ViewModelBuilder<MealViewmodel>.reactive(
+      viewModelBuilder: () => MealViewmodel(mealRepository: MealRepository()),
+      onViewModelReady: (model) {
+        model
+          ..state.onChange.listen((event) => currentState = event.neu)
+          ..mealsList.onChange.listen((event) => meals = event.neu)
+          ..nextMeal.onChange.listen((event) => nextMeal = event.neu);
+      },
+      builder: (context, model, child) => Scaffold(
+        appBar: AppBar(
+          centerTitle: false,
+          actions: [
+            IconButton(
+              style: IconButton.styleFrom(backgroundColor: Colors.white),
+              onPressed: () {},
+              icon: SvgPicture.asset(
+                'assets/notification_icon.svg',
+                color: ThemeColors.secondary(),
+              ),
+            ),
+
+            if (meals.isNotEmpty)
+              IconButton(
+                style: IconButton.styleFrom(backgroundColor: Colors.white),
+                onPressed: () {
+                  Navigator.pushNamed(context, "/streak");
+                },
+                icon: SvgPicture.asset(
+                  'assets/flame_icon.svg',
+                  color: ThemeColors.secondary(),
+                  height: 23,
+                ),
+              ),
+          ],
+          title: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 40,
+                width: 40,
+                child: Image.asset('assets/nutritime.png'),
+              ),
+              ThemeSpacers.w8,
+              Text('Nutritime', style: ThemeTypography.getTitle2()),
+            ],
+          ),
+        ),
+        body: (currentState == MealPageState.mealListLoaded)
+            ? Column(
                 children: [
                   if (nextMeal != null)
-                  NextMealCard(
-                    onClick: () =>
-                        showUpdateMealBottomSheet(model, nextMeal!),
-                    onComplete: () {
-                      model.onChecked(nextMeal!);
-                    },
-                    time: nextMeal!.time?.format(context),
-                    title: nextMeal!.title,
-                    calories: nextMeal!.calories,
-                    description: nextMeal!.description,
-                  ),
+                    NextMealCard(
+                      onClick: () =>
+                          showUpdateMealBottomSheet(model, nextMeal!),
+                      onComplete: () {
+                        model.onChecked(nextMeal!);
+                      },
+                      time: nextMeal!.time?.format(context),
+                      title: nextMeal!.title,
+                      calories: nextMeal!.calories,
+                      description: nextMeal!.description,
+                    ),
 
                   ThemeSpacers.h28,
 
@@ -193,44 +236,8 @@ class _MealPageState extends State<MealPage> {
                     ),
                   ),
                 ],
-              );
-            }
-
-            if (currentState == MealPageState.mealListEmpty) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 28.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Empty(
-                      title: 'Lets start',
-                      description:
-                          'Bring you diet and let us hel you follow and get you nutrition goals',
-                    ),
-                    ButtonDefault(
-                      onClick: () async {
-                        showAddMealBottomSheet(model);
-                      },
-                      isLarge: true,
-                      label: 'Start',
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            if (currentState == MealPageState.mealListCompleted) {
-              return Center(
-                child: Empty(
-                  title: 'Congratulations!',
-                  description: 'You completed your goals todays.',
-                ),
-              );
-            }
-
-            return const Center(child: CircularProgressIndicator());
-          },
-        ),
+              )
+            : getEmptyLayout(currentState, model),
       ),
     );
   }
